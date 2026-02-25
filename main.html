@@ -206,3 +206,55 @@ nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       <section class="card" id="stats-section">
         <h2>Stats</h2>
         <pre id="stats">Loading…</pre>
+      </section>
+
+      <section class="card" id="events-section">
+        <h2>Recent events</h2>
+        <div id="eventsList" class="events-list"></div>
+        <div class="actions" style="margin-top: 0.5rem;">
+          <button type="button" id="refreshEvents" class="btn btn-outline">Refresh events</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">How it works</h2>
+        <ol class="how-list">
+          <li>Submit a report with an optional bounty (wei). The Cigilante engine stores it and returns a report ID.</li>
+          <li>Reports appear in the list. Unclaimed reports can be claimed by anyone (simulated claimer address).</li>
+          <li>Stats show total report count, total bounty wei, and number of claimed bounties. Events log recent activity.</li>
+          <li>Run the Cigilante Java server (e.g. <code>java Cigilante</code>) on port 3952. Set API_BASE below if your server runs elsewhere.</li>
+        </ol>
+      </section>
+
+      <section class="card faq" id="faq-section">
+        <h2 class="section-title">FAQ</h2>
+        <dl>
+          <dt>What is VigilanteWatch?</dt>
+          <dd>VigilanteWatch is the web interface for Cigilante, a community watch bounty ledger. You submit reports (tips), optionally with a bounty; watchers can claim bounties. It runs off-chain; no blockchain required.</dd>
+          <dt>Do I need an account?</dt>
+          <dd>No. The demo uses placeholder addresses (e.g. 0x0). In production you might tie submissions to wallet or session.</dd>
+          <dt>Where does the server run?</dt>
+          <dd>By default this page expects the Cigilante HTTP server at <code>http://localhost:3952</code>. Start it with <code>java Cigilante</code> from the Cigilante folder.</dd>
+          <dt>What are the limits?</dt>
+          <dd>Max report body length 2048 chars, max reports 500, batch query limit 100. Bounty wei is capped by the server.</dd>
+          <dt>What error codes can I get?</dt>
+          <dd>CG_ReportTooLong, CG_ReportCapReached, CG_BountyOutOfRange, CG_InvalidReportId, CG_ReportNotFound, CG_AlreadyClaimed, CG_BatchTooLarge, CG_InvalidAddress, CG_MissingId.</dd>
+          <dt>Is this on a blockchain?</dt>
+          <dd>No. Cigilante is an off-chain ledger. Data lives in the Java server process. For persistence you would need to run it against a database or integrate with a chain separately.</dd>
+          <dt>What is the Connection section?</dt>
+          <dd>It shows the API base URL and the result of the /health endpoint. If status is OK, the Cigilante server is reachable. Use &quot;Check health&quot; to re-run the check.</dd>
+          <dt>Does the page auto-refresh?</dt>
+          <dd>When you return to the browser tab (window focus), the app runs a debounced refresh of reports, stats, and events so data stays up to date.</dd>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Limits reference</h2>
+        <p class="text-muted text-small mb-2">Server-enforced limits; exceeding them returns the listed error.</p>
+        <table class="api-table">
+          <thead><tr><th>Limit</th><th>Value</th><th>Error if exceeded</th></tr></thead>
+          <tbody>
+            <tr><td>Report body length</td><td>2048 chars</td><td>CG_ReportTooLong</td></tr>
+            <tr><td>Max reports in ledger</td><td>500</td><td>CG_ReportCapReached</td></tr>
+            <tr><td>Query limit (offset/limit)</td><td>100</td><td>CG_BatchTooLarge</td></tr>
+            <tr><td>Bounty wei</td><td>0 .. server max</td><td>CG_BountyOutOfRange</td></tr>
