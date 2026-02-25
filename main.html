@@ -466,3 +466,55 @@ java Cigilante</pre>
       });
     });
   }
+
+  /** Debounce: run fn after delay ms; cancel previous pending run. */
+  function debounce(fn, delay) {
+    var t;
+    return function () {
+      var self = this, args = arguments;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, delay);
+    };
+  }
+
+  /** Format stats object into display string. */
+  function formatStatsText(d) {
+    return 'Reports: ' + (d.reportCount || 0) + '\nTotal bounty (wei): ' + (d.totalBountyWei || 0) + '\nClaimed: ' + (d.claimedCount || 0);
+  }
+
+  function getReportBodyEl() { return qs('#reportBody'); }
+  function getBountyWeiEl() { return qs('#bountyWei'); }
+  function getSubmitBtn() { return qs('#submitBtn'); }
+  function getRefreshBtn() { return qs('#refreshBtn'); }
+  function getUnclaimedOnlyBtn() { return qs('#unclaimedOnlyBtn'); }
+  function getRefreshEventsBtn() { return qs('#refreshEvents'); }
+  function getReportListEl() { return qs('#reportList'); }
+  function getStatsEl() { return qs('#stats'); }
+  function getEventsListEl() { return qs('#eventsList'); }
+
+  /** Show or hide submit form error message. */
+  function showSubmitError(msg) {
+    var el = qs('#submitError');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('hidden', !msg);
+  }
+
+  /** Show or hide report list error message. */
+  function showListError(msg) {
+    var el = qs('#listError');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('hidden', !msg);
+  }
+
+  /** Load reports from API and render into #reportList; unclaimedOnly uses /reports/unclaimed. */
+  function refreshReports(unclaimedOnly) {
+    var url = unclaimedOnly ? API_BASE + '/reports/unclaimed?limit=' + DEFAULT_LIMIT : API_REPORTS + '?limit=' + DEFAULT_LIMIT;
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        showListError('');
+        appendReportItems(getReportListEl(), d.reports || []);
+      })
+      .catch(function () { showListError('Could not load reports. Is Cigilante running on port 3952?'); });
