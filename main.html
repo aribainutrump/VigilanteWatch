@@ -518,3 +518,55 @@ java Cigilante</pre>
         appendReportItems(getReportListEl(), d.reports || []);
       })
       .catch(function () { showListError('Could not load reports. Is Cigilante running on port 3952?'); });
+  }
+
+  /** Fetch /stats and update #stats pre. */
+  function refreshStats() {
+    fetchWithRetry(API_STATS)
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var el = qs('#stats');
+        if (el) el.textContent = formatStatsText(d);
+      })
+      .catch(function () {
+        var el = qs('#stats');
+        if (el) el.textContent = 'Failed to load stats.';
+      });
+  }
+
+  /** Fetch /events and render into #eventsList. */
+  function refreshEvents() {
+    fetch(API_EVENTS + '?n=30')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var el = qs('#eventsList');
+        el.innerHTML = '';
+        (d.events || []).forEach(function (ev) {
+          var div = document.createElement('div');
+          div.textContent = ev;
+          el.appendChild(div);
+        });
+      })
+      .catch(function () { qs('#eventsList').innerHTML = '<div>Could not load events.</div>'; });
+  }
+
+  /** Escape string for safe HTML text content. */
+  function escapeHtml(s) {
+    if (!s) return '';
+    var div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  /** Build HTML string for one report item (id, body snippet, bounty, claim button or claimed label). */
+  function buildReportItemHtml(r) {
+    var bodyShort = (r.body || '').substring(0, 120);
+    if ((r.body || '').length > 120) bodyShort += '\u2026';
+    var id = r.id || '';
+    var bounty = r.bountyWei != null ? r.bountyWei : 0;
+    var claimed = r.claimed ? true : false;
+    var claimBtn = claimed ? '' : ' <button type="button" class="btn btn-outline" style="padding:0.25rem 0.5rem;font-size:0.8rem;" data-id="' + escapeHtml(id) + '">Claim</button>';
+    return '<div class="id">' + escapeHtml(id) + '</div><div class="body">' + escapeHtml(bodyShort) + '</div><div class="meta">Bounty: ' + bounty + ' wei' + (claimed ? ' <span class="claimed">Claimed</span>' : claimBtn) + '</div>';
+  }
+
+  /** Attach click handlers to all Claim buttons in #reportList. */
