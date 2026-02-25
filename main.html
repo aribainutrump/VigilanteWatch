@@ -622,3 +622,53 @@ java Cigilante</pre>
   };
 
   qs('#refreshBtn').onclick = function () { refreshReports(false); };
+  qs('#unclaimedOnlyBtn').onclick = function () { refreshReports(true); };
+  qs('#refreshEvents').onclick = refreshEvents;
+
+  /** Optional: debounced refresh on focus (reload data when user returns to tab). */
+  var refreshAll = function () {
+    refreshReports(false);
+    refreshStats();
+    refreshEvents();
+  };
+  var debouncedRefresh = debounce(refreshAll, 400);
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    window.addEventListener('focus', debouncedRefresh);
+  }
+
+  if (typeof window !== 'undefined' && window.location && window.location.protocol === 'file:') {
+    console.warn('VigilanteWatch: opened as file:// — API may be blocked. Use a local server or open from http://.');
+  }
+
+  /** Show API base in UI and run initial health check. */
+  (function initConnectionDisplay() {
+    var baseEl = qs('#apiBaseDisplay');
+    var statusEl = qs('#connectionStatus');
+    if (baseEl) baseEl.textContent = API_BASE;
+    function setStatus(ok, msg) {
+      if (!statusEl) return;
+      statusEl.textContent = msg != null ? msg : (ok ? 'OK' : 'Error');
+      statusEl.style.color = ok ? 'var(--claimed, #86efac)' : '#f87171';
+    }
+    function doHealthCheck() {
+      setStatus(null, 'Checking…');
+      fetchWithRetry(API_HEALTH)
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          setStatus(d && (d.status === 'ok' || d.status === 'healthy'), d && d.ref ? 'OK (' + String(d.ref) + ')' : 'OK');
+        })
+        .catch(function () { setStatus(false, 'Unreachable'); });
+    }
+    var healthBtn = qs('#healthCheckBtn');
+    if (healthBtn) healthBtn.onclick = doHealthCheck;
+    doHealthCheck();
+  })();
+
+  refreshReports(false);
+  refreshStats();
+  refreshEvents();
+})();
+  </script>
+</body>
+</html>
+
