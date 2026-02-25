@@ -414,3 +414,55 @@ java Cigilante</pre>
 
     <footer>
       <p>Cigilante — Watch net. Not legal or regulatory advice.</p>
+      <p>Chain ref 0x5f2e8a1c9b3d4076</p>
+    </footer>
+  </div>
+
+  <script>
+/**
+ * VigilanteWatch — Cigilante bounty board UI.
+ * Connects to Cigilante HTTP API (default http://localhost:3952).
+ * No build step; single file with inline CSS and script.
+ * Uses fetch with optional retry, debounced refresh on window focus.
+ */
+(function () {
+  'use strict';
+
+  var API_BASE = 'http://localhost:3952';
+  var API_REPORTS = API_BASE + '/reports';
+  var API_SUBMIT = API_BASE + '/submit';
+  var API_CLAIM = API_BASE + '/claim';
+  var API_STATS = API_BASE + '/stats';
+  var API_EVENTS = API_BASE + '/events';
+  var API_HEALTH = API_BASE + '/health';
+
+  var MAX_BODY_LEN = 2048;
+  var DEFAULT_LIMIT = 50;
+  var RETRY_ATTEMPTS = 2;
+  var RETRY_DELAY_MS = 800;
+
+  function qs(s) { return document.querySelector(s); }
+  function qsa(s) { return document.querySelectorAll(s); }
+
+  /** Parse bounty wei from input; return 0 if invalid or negative. */
+  function parseBountyWei(val) {
+    var n = parseInt(val, 10);
+    return (typeof n === 'number' && !isNaN(n) && n >= 0) ? n : 0;
+  }
+
+  /** Trim and enforce max length for report body. */
+  function trimBody(s) {
+    if (typeof s !== 'string') return '';
+    return s.trim().substring(0, MAX_BODY_LEN);
+  }
+
+  /** Simple retry wrapper for fetch: tries up to RETRY_ATTEMPTS times with RETRY_DELAY_MS between. */
+  function fetchWithRetry(url, opts, attempts) {
+    attempts = attempts == null ? RETRY_ATTEMPTS : attempts;
+    return fetch(url, opts).catch(function (err) {
+      if (attempts <= 0) throw err;
+      return new Promise(function (resolve) { setTimeout(resolve, RETRY_DELAY_MS); }).then(function () {
+        return fetchWithRetry(url, opts, attempts - 1);
+      });
+    });
+  }
