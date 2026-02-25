@@ -362,3 +362,55 @@ java Cigilante</pre>
 
       <section class="card">
         <h2 class="section-title">Example requests</h2>
+        <p class="text-muted text-small mb-2">Copy-paste examples (replace localhost:3952 if your server is elsewhere).</p>
+        <p class="text-small font-mono mb-1">List reports (first 10):</p>
+        <pre class="code-block">curl -s "http://localhost:3952/reports?offset=0&limit=10"</pre>
+        <p class="text-small font-mono mb-1">Submit a report with bounty 100 wei:</p>
+        <pre class="code-block">curl -X POST "http://localhost:3952/submit" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "body=Observed activity at 0x123&bountyWei=100&from=0x0"</pre>
+        <p class="text-small font-mono mb-1">Claim bounty (reportId from list):</p>
+        <pre class="code-block">curl -X POST "http://localhost:3952/claim?reportId=CG-xxx&claimer=0x0"</pre>
+        <p class="text-small font-mono mb-1">Health check:</p>
+        <pre class="code-block">curl -s "http://localhost:3952/health"</pre>
+      </section>
+    </main>
+
+      <section class="card">
+        <h2 class="section-title">Troubleshooting</h2>
+        <ul class="how-list">
+          <li><strong>Reports not loading</strong> — Ensure Cigilante is running (<code>java Cigilante</code>) and listening on port 3952. Check Connection status on this page; if it says Unreachable, fix the server or CORS.</li>
+          <li><strong>Submit fails</strong> — Verify body is not empty and under 2048 chars; bounty is a non-negative number. Check the error message shown under the form.</li>
+          <li><strong>Claim fails</strong> — Report may already be claimed (CG_AlreadyClaimed). Refresh the list to see current state.</li>
+          <li><strong>Wrong server</strong> — Edit <code>API_BASE</code> in this file (script section) to your server URL, e.g. <code>https://your-domain.com</code> (no trailing slash).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Keyboard &amp; accessibility</h2>
+        <p class="text-muted text-small mb-2">This UI is form and button driven. Use Tab to move between report body, bounty input, and buttons. Enter in the textarea adds a new line; use the Submit button to send. Buttons are focusable and support focus-visible outline. No custom keyboard shortcuts are defined; screen readers can navigate sections via headings.</p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Response data format</h2>
+        <p class="text-muted text-small mb-2">Typical JSON shapes returned by the API (for integration).</p>
+        <p class="text-small font-mono mb-1">GET /reports — list:</p>
+        <pre class="code-block">{ "reports": [ { "id": "CG-...", "body": "...", "bountyWei": 0, "claimed": false } ] }</pre>
+        <p class="text-small font-mono mb-1">POST /submit — success:</p>
+        <pre class="code-block">{ "reportId": "CG-...", "ok": true }</pre>
+        <p class="text-small font-mono mb-1">POST /submit — error:</p>
+        <pre class="code-block">{ "error": "CG_ReportTooLong" }</pre>
+        <p class="text-small font-mono mb-1">GET /stats:</p>
+        <pre class="code-block">{ "reportCount": 0, "totalBountyWei": 0, "claimedCount": 0 }</pre>
+        <p class="text-small font-mono mb-1">GET /health:</p>
+        <pre class="code-block">{ "status": "ok", "ref": "0x5f2e8a1c9b3d4076" }</pre>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">About VigilanteWatch</h2>
+        <p class="text-muted text-small">VigilanteWatch is a single-page web interface for the Cigilante community watch bounty ledger. It allows users to submit reports (with optional bounty wei), view and filter reports, claim bounties, and inspect stats and recent events. The backend is the Cigilante Java application, which exposes a simple HTTP API. This front end is static HTML/CSS/JS with no framework; you can host it on any static server and point <code>API_BASE</code> to your Cigilante instance. Not legal or financial advice; for community coordination only.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>Cigilante — Watch net. Not legal or regulatory advice.</p>
