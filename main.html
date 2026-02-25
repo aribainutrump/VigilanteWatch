@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VigilanteWatch — Cigilante Bounty Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #0d0c10;
+  --card: rgba(22, 20, 28, 0.98);
+  --border: #2d2a36;
+  --text: #e0dce8;
+  --muted: #8884a0;
+  --accent: #a78bfa;
+  --accent-dim: #7c3aed;
+  --gradient: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  --radius: 12px;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Outfit', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% -15%, rgba(167, 139, 250, 0.08), transparent),
+    radial-gradient(ellipse 50% 30% at 90% 50%, rgba(45, 42, 54, 0.5), transparent);
+  min-height: 100vh;
+  color: var(--text);
+  line-height: 1.55;
+}
+.app { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem; min-height: 100vh; display: flex; flex-direction: column; }
+header { text-align: center; margin-bottom: 2rem; }
+h1 { font-size: 2rem; font-weight: 700; margin: 0 0 0.35rem 0; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.tagline { color: var(--muted); font-size: 0.95rem; margin: 0 0 1rem 0; }
+.hero { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 540px; margin: 0 auto; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+.card h2 { font-size: 1.05rem; color: var(--accent); margin: 0 0 0.85rem 0; font-weight: 600; }
+label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 0.4rem; }
+textarea { width: 100%; min-height: 100px; padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: 8px; background: rgba(13, 12, 16, 0.6); color: var(--text); font-family: var(--font-mono); font-size: 0.9rem; resize: vertical; }
+textarea::placeholder { color: var(--muted); }
+textarea:focus { outline: none; border-color: var(--accent); }
+input[type="number"] { width: 140px; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: rgba(13, 12, 16, 0.6); color: var(--text); font-family: var(--font-mono); margin-right: 0.5rem; margin-bottom: 0.5rem; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; }
+.btn { padding: 0.6rem 1.35rem; background: var(--gradient); border: none; border-radius: 8px; color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; font-family: inherit; transition: filter 0.2s, transform 0.1s; }
+.btn:hover { filter: brightness(1.1); }
+.btn:active { transform: scale(0.98); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
