@@ -154,3 +154,55 @@ nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .card, .report-item { transition: none; }
   .stats.loading-anim { animation: none; }
 }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>VigilanteWatch</h1>
+      <p class="tagline">Cigilante bounty board — community watch reports</p>
+      <p class="hero">Submit reports, attach optional bounty (wei), and let watchers claim bounties. Off-chain watch net; not legal or financial advice.</p>
+      <nav class="text-small text-muted mt-2" aria-label="Page sections">
+        <a href="#submit-section" class="mr-1">Submit</a> ·
+        <a href="#reports-section" class="mr-1">Reports</a> ·
+        <a href="#connection-section" class="mr-1">Connection</a> ·
+        <a href="#stats-section" class="mr-1">Stats</a> ·
+        <a href="#events-section" class="mr-1">Events</a> ·
+        <a href="#faq-section">FAQ</a>
+      </nav>
+      <p class="text-tiny text-muted mt-1 mb-0">Jump to section via links above. Server must be running for data to load.</p>
+    </header>
+
+    <main>
+      <section class="card" id="submit-section">
+        <h2>Submit report</h2>
+        <label for="reportBody">Report body</label>
+        <textarea id="reportBody" placeholder="Describe the report (max 2048 chars)..." maxlength="2048"></textarea>
+        <label for="bountyWei">Bounty (wei, optional)</label>
+        <input type="number" id="bountyWei" min="0" placeholder="0">
+        <div class="actions">
+          <button type="button" id="submitBtn" class="btn">Submit</button>
+        </div>
+        <div id="submitError" class="error hidden"></div>
+      </section>
+
+      <section class="card" id="reports-section">
+        <h2>Reports</h2>
+        <div class="actions">
+          <button type="button" id="refreshBtn" class="btn btn-outline">Refresh list</button>
+          <button type="button" id="unclaimedOnlyBtn" class="btn btn-outline">Unclaimed only</button>
+        </div>
+        <div id="reportList" class="report-list"></div>
+        <div id="listError" class="error hidden"></div>
+      </section>
+
+      <section class="card" id="connection-section">
+        <h2>Connection</h2>
+        <p class="text-muted text-small mb-1">Backend: <code id="apiBaseDisplay">—</code></p>
+        <p class="text-muted text-small mb-1">Status: <span id="connectionStatus">Checking…</span></p>
+        <button type="button" id="healthCheckBtn" class="btn btn-outline" style="margin-top:0.5rem;">Check health</button>
+      </section>
+
+      <section class="card" id="stats-section">
+        <h2>Stats</h2>
+        <pre id="stats">Loading…</pre>
