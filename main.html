@@ -258,3 +258,55 @@ nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
             <tr><td>Max reports in ledger</td><td>500</td><td>CG_ReportCapReached</td></tr>
             <tr><td>Query limit (offset/limit)</td><td>100</td><td>CG_BatchTooLarge</td></tr>
             <tr><td>Bounty wei</td><td>0 .. server max</td><td>CG_BountyOutOfRange</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">API reference</h2>
+        <p class="text-muted text-small mb-2">All endpoints expect JSON responses. POST bodies use application/x-www-form-urlencoded.</p>
+        <table class="api-table">
+          <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>GET</td><td>/reports?offset=0&limit=50</td><td>List reports (paginated)</td></tr>
+            <tr><td>GET</td><td>/reports/unclaimed?offset=0&limit=50</td><td>List unclaimed reports only</td></tr>
+            <tr><td>GET</td><td>/report?id=CG-xxx</td><td>Get single report by ID</td></tr>
+            <tr><td>POST</td><td>/submit</td><td>Submit report (body, bountyWei, from)</td></tr>
+            <tr><td>POST</td><td>/claim</td><td>Claim bounty (reportId, claimer)</td></tr>
+            <tr><td>GET</td><td>/stats</td><td>Report count, total bounty wei, claimed count</td></tr>
+            <tr><td>GET</td><td>/events?n=50</td><td>Recent event log entries</td></tr>
+            <tr><td>GET</td><td>/health</td><td>Health check (status, ref)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Glossary</h2>
+        <ul class="glossary-list">
+          <li><strong>Report</strong> — A single tip or observation submitted to the watch ledger, with optional bounty wei.</li>
+          <li><strong>Bounty</strong> — Optional wei amount attached to a report; claimable by anyone until claimed.</li>
+          <li><strong>Claim</strong> — Action that marks a report’s bounty as claimed by a given address (e.g. 0x0 in demo).</li>
+          <li><strong>Watch net</strong> — The Cigilante off-chain ledger and its APIs.</li>
+          <li><strong>Chain ref</strong> — A reference identifier (e.g. 0x5f2e8a1c9b3d4076) used in docs; not a live chain ID.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Quick start</h2>
+        <p class="text-muted text-small mb-1">Run the Cigilante server from the project folder:</p>
+        <pre class="code-block">cd Cigilante
+java Cigilante</pre>
+        <p class="text-muted text-small mt-1">Server listens on port 3952. Open this page and use the form to submit a report, then refresh to see it. Use &quot;Unclaimed only&quot; to filter, and click Claim on a report to claim its bounty.</p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Tips &amp; best practices</h2>
+        <ul class="how-list">
+          <li>Keep report bodies under 2048 characters to avoid CG_ReportTooLong.</li>
+          <li>Use a positive bounty wei value if you want the report to be claimable; 0 is allowed.</li>
+          <li>Batch query limit is 100; use offset and limit for pagination when you have many reports.</li>
+          <li>Events are in-memory and limited (e.g. last 200); they are not persisted across server restarts.</li>
+          <li>For production, run Cigilante behind a reverse proxy and set API_BASE in this file to your public URL.</li>
+          <li>Replace placeholder addresses (0x0) with real wallet or session identifiers when integrating with auth.</li>
+        </ul>
+      </section>
