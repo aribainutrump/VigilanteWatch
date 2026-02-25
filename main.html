@@ -570,3 +570,55 @@ java Cigilante</pre>
   }
 
   /** Attach click handlers to all Claim buttons in #reportList. */
+  function bindClaimButtons() {
+    qsa('#reportList [data-id]').forEach(function (btn) {
+      btn.onclick = function () {
+        var id = btn.getAttribute('data-id');
+        fetch(API_CLAIM + '?reportId=' + encodeURIComponent(id) + '&claimer=0x0', { method: 'POST' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.ok) { refreshReports(false); refreshStats(); refreshEvents(); }
+            if (data.error) showListError(data.error);
+          })
+          .catch(function () { showListError('Network error'); });
+      };
+    });
+  }
+
+  /** Clear listEl and append one .report-item per report; then bind claim buttons. */
+  function appendReportItems(listEl, reports) {
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    (reports || []).forEach(function (r) {
+      var div = document.createElement('div');
+      div.className = 'report-item';
+      div.innerHTML = buildReportItemHtml(r);
+      listEl.appendChild(div);
+    });
+    bindClaimButtons();
+  }
+
+  qs('#submitBtn').onclick = function () {
+    var body = trimBody(getReportBodyEl() ? getReportBodyEl().value : '');
+    var bounty = parseBountyWei(getBountyWeiEl() ? getBountyWeiEl().value : 0);
+    showSubmitError('');
+    fetch(API_SUBMIT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'body=' + encodeURIComponent(body) + '&bountyWei=' + String(bounty) + '&from=0x0'
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.reportId) {
+          qs('#reportBody').value = '';
+          qs('#bountyWei').value = '';
+          refreshReports(false);
+          refreshStats();
+          refreshEvents();
+        }
+        if (d.error) showSubmitError(d.error);
+      })
+      .catch(function () { showSubmitError('Network error'); });
+  };
+
+  qs('#refreshBtn').onclick = function () { refreshReports(false); };
