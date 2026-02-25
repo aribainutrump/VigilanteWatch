@@ -310,3 +310,55 @@ java Cigilante</pre>
           <li>Replace placeholder addresses (0x0) with real wallet or session identifiers when integrating with auth.</li>
         </ul>
       </section>
+
+      <section class="card">
+        <h2 class="section-title">Error codes</h2>
+        <p class="text-muted text-small mb-2">The API returns these error codes in the <code>error</code> field of the JSON body.</p>
+        <ul class="glossary-list">
+          <li><strong>CG_ReportTooLong</strong> — Report body exceeds 2048 characters.</li>
+          <li><strong>CG_ReportCapReached</strong> — Maximum number of reports (500) reached.</li>
+          <li><strong>CG_BountyOutOfRange</strong> — Bounty wei is negative or above the allowed scale.</li>
+          <li><strong>CG_InvalidReportId</strong> — Report ID missing or invalid format (must start with CG-).</li>
+          <li><strong>CG_ReportNotFound</strong> — No report with the given ID.</li>
+          <li><strong>CG_AlreadyClaimed</strong> — The report’s bounty was already claimed.</li>
+          <li><strong>CG_BatchTooLarge</strong> — Requested limit exceeds 100.</li>
+          <li><strong>CG_MissingId</strong> — Required id parameter missing (e.g. for /report).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Security notes</h2>
+        <p class="text-muted text-small mb-2">Use these guidelines when deploying Cigilante and VigilanteWatch in production.</p>
+        <ul class="how-list">
+          <li>Run the Cigilante server behind HTTPS and a reverse proxy (e.g. nginx, Caddy). Do not expose port 3952 directly to the internet.</li>
+          <li>Validate and sanitize all report bodies on the server; the client may send arbitrary payloads. Cigilante enforces length and format.</li>
+          <li>If you integrate wallet-based auth, verify signatures on the backend before associating reports or claims with addresses.</li>
+          <li>Rate-limit submission and claim endpoints to prevent abuse. The Java server does not include rate limiting by default.</li>
+          <li>Treat bounty wei as off-chain bookkeeping unless you explicitly bridge to a chain; no real funds move in the default setup.</li>
+          <li>Keep dependencies (Java runtime, any libraries) updated. Do not store secrets in client-side code; use env vars or config on the server.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Version &amp; compatibility</h2>
+        <p class="text-muted text-small mb-1">VigilanteWatch is the web UI for the Cigilante watch net. This single-file build is self-contained (no build step).</p>
+        <ul class="glossary-list">
+          <li><strong>API version</strong> — Compatible with Cigilante HTTP API as of the bundled server (paths: /reports, /submit, /claim, /stats, /events, /health).</li>
+          <li><strong>Browsers</strong> — Tested on recent Chrome, Firefox, Safari, Edge. Requires fetch and basic ES5-style JS.</li>
+          <li><strong>Config</strong> — Edit <code>API_BASE</code> in the script section to point to your Cigilante server URL (including port).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Integrations</h2>
+        <p class="text-muted text-small mb-2">Ways to use the Cigilante API from outside this UI.</p>
+        <ul class="how-list">
+          <li><strong>cURL</strong> — Submit: <code>curl -X POST "http://localhost:3952/submit" -d "body=Hello&bountyWei=0&from=0x0"</code></li>
+          <li><strong>JavaScript</strong> — <code>fetch(API_BASE + '/reports?limit=10').then(r => r.json()).then(console.log)</code></li>
+          <li><strong>Python</strong> — Use <code>requests.get('http://localhost:3952/stats')</code> or <code>requests.post('.../submit', data={...})</code></li>
+          <li><strong>Wallet links</strong> — In a dApp you can pass <code>from</code> and <code>claimer</code> as the connected wallet address after verifying ownership on your backend.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Example requests</h2>
